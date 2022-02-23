@@ -3,18 +3,17 @@ import { CustomOperation } from './custom-number.types'
 export type BigNumber = number[]
 
 const fromString = (s: string): BigNumber => {
-  return s.split('').map((char) => {
-    const number = parseInt(char)
-    if (isNaN(number)) throw new Error('Not a number')
-    return number
-  })
+  return s
+    .split('')
+    .reverse()
+    .map((char) => {
+      const number = parseInt(char)
+      if (isNaN(number)) throw new Error('Not a number')
+      return number
+    })
 }
 
 const add = (n1: BigNumber, n2: BigNumber): BigNumber => {
-  // Because operations arithmetics are done from the least important digit
-  n2 = n2.reverse()
-  n1 = n1.reverse()
-
   // Ensure we are looping on the biggest array of bigNumber
   if (n2.length > n1.length) {
     const tmp = n2
@@ -36,14 +35,10 @@ const add = (n1: BigNumber, n2: BigNumber): BigNumber => {
   if (carrying > 0) addition.push(carrying)
 
   // Reflip the result to get the good way
-  return addition.reverse()
+  return addition
 }
 
 const multiply = (n1: BigNumber, n2: BigNumber): BigNumber => {
-  // To iterate from the end
-  n2 = n2.reverse()
-  n1 = n1.reverse()
-
   return n1.reduce((acc: BigNumber, n1Digit, n1Index): BigNumber => {
     let carrying: number = 0
     const result: BigNumber = n2.map((n2Digit) => {
@@ -60,12 +55,13 @@ const multiply = (n1: BigNumber, n2: BigNumber): BigNumber => {
     for (let index = 0; index < n1Index; index++) {
       result.unshift(0)
     }
-    return add(result.reverse(), acc)
+
+    return add(result, acc)
   }, [])
 }
 
 const toString = (n: BigNumber): string => {
-  return n.reduce((acc, number) => `${acc}${number.toString()}`, '')
+  return n.reverse().reduce((acc, number) => `${acc}${number.toString()}`, '')
 }
 
 export const BigNumberOperation: CustomOperation<BigNumber> = {
